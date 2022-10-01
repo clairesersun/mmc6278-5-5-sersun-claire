@@ -66,15 +66,14 @@ router
   // Should return 404 if no item is found
   .get(async (req, res) => {
     try {
-      const [{item}] = await db.query(
-        `SELECT FROM inventory WHERE id = ?`,
+      const [[item]] = await db.query(
+        `SELECT * FROM inventory WHERE id = ?`,
         req.params.id
       )
-      console.log(item)
       if (!item) return res.status(404).send('Item not found')
-    res.status(200).json(item)
+    res.json(item)
     } catch (err) {
-      res.status(500).send('Error retrieving item: ' + err.message)
+      res.status(404).send('Item not found: ' + err.message)
     }
   })
   // The response should look like:
@@ -99,15 +98,15 @@ router
         name, 
         image, 
         description, 
-        quantity, 
-        price
+        price,
+        quantity
       } = req.body
       if (!(
         name &&
         image &&
         description &&
-        typeof quantity === "number" &&
-        typeof price === "number"
+        typeof price === 'number' &&
+        typeof quantity === 'number'
       ))
         return res
           .status(400)
@@ -115,7 +114,7 @@ router
   
        const [{affectedRows}] = await db.query(
           `UPDATE inventory SET ? WHERE id = ?`,
-          [{name, image, description, quantity, price}, req.params.id]
+          [{name, image, description, price, quantity}, req.params.id]
         )
         if (affectedRows === 0) return res.status(404).send('item not found')
       res.status(204).send('Inventory updated')
