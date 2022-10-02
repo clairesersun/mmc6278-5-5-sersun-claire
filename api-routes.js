@@ -47,10 +47,10 @@ router
       ))
         return res
           .status(400)
-          .send('must include price, quantity, name, image, description')
+          .send('must include name, image, description, quantity, price')
   
       await db.query(`
-        INSERT INTO inventory (price, quantity, name, image, description)
+        INSERT INTO inventory (name, image, description, quantity, price)
         VALUES (?, ?, ?, ?, ?)
       `, [name, image, description, quantity, price])
       res.status(204).send('Inventory created')
@@ -105,8 +105,8 @@ router
         name &&
         image &&
         description &&
-        typeof price === 'number' &&
-        typeof quantity === 'number'
+        typeof price === "number" &&
+        typeof quantity === "number"
       ))
         return res
           .status(400)
